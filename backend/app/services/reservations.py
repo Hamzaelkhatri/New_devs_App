@@ -26,10 +26,9 @@ async def calculate_monthly_revenue(property_id: str, month: int, year: int, db_
     """
     
     # In production this query executes against a database session.
-    # result = await db.fetch_val(query, property_id, tenant_id, start_date, end_date)
-    # return result or Decimal('0')
+    result = await db.fetch_val(query, property_id, tenant_id, start_date, end_date)
+    return result or Decimal('0')
     
-    return Decimal('0') # Placeholder for now until DB connection is finalized
 
 async def calculate_total_revenue(property_id: str, tenant_id: str) -> Dict[str, Any]:
     """
@@ -91,14 +90,14 @@ async def calculate_total_revenue(property_id: str, tenant_id: str) -> Dict[str,
         # Create property-specific mock data for testing when DB is unavailable
         # This ensures each property shows different figures
         mock_data = {
-            'prop-001': {'total': '1000.00', 'count': 3},
-            'prop-002': {'total': '4975.50', 'count': 4}, 
-            'prop-003': {'total': '6100.50', 'count': 2},
-            'prop-004': {'total': '1776.50', 'count': 4},
-            'prop-005': {'total': '3256.00', 'count': 3}
+            ('prop-001', 'tenant-a'): {'total': '2250.000', 'count': 4},
+            ('prop-002', 'tenant-a'): {'total': '4975.50', 'count': 4},
+            ('prop-003', 'tenant-a'): {'total': '6100.50', 'count': 2},
+            ('prop-004', 'tenant-b'): {'total': '1776.50', 'count': 4},
+            ('prop-005', 'tenant-b'): {'total': '3256.00', 'count': 3},
         }
         
-        mock_property_data = mock_data.get(property_id, {'total': '0.00', 'count': 0})
+        mock_property_data = mock_data.get((property_id, tenant_id), {'total': '0.00', 'count': 0})
         
         return {
             "property_id": property_id,
@@ -107,3 +106,4 @@ async def calculate_total_revenue(property_id: str, tenant_id: str) -> Dict[str,
             "currency": "USD",
             "count": mock_property_data['count']
         }
+ 
